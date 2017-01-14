@@ -9,8 +9,8 @@ Requirements
 oVirt has to be 4.0.4 or higher and [ovirt-imageio](http://www.ovirt.org/develop/release-management/features/storage/image-upload/) must be installed and running.
 
 Role Variables
-
 --------------
+
 ```
  - ova_url - Define the URL where the Manage IQ OVA is stored
  - ovirt_user - Define the user to be used to access oVirt.
