@@ -1,0 +1,12 @@
+---
+ova_url: http://releases.manageiq.org/manageiq-ovirt-euwe-1.ova
+ovirt_user: admin@internal
+ovirt_url: https://system-ge2.rhev.lab.eng.brq.redhat.com/ovirt-engine/api
+ovirt_ca: /etc/pki/ovirt-engine/ca.pem
+ovirt_password: 123456
+vm_name: manageiq
+vm_cluster: golden_env_mixed_1
+vm_storage_domain: nfs_0
+vm_cloud_init:
+  user_name: root
+  root_password: password

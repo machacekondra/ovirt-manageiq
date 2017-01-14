@@ -1,0 +1,59 @@
+---
+- name: Download the OVA image of ManageIQ
+  get_url:
+    url: "{{ ova_url }}"
+    dest: /tmp/manageiq.ova
+  register: downloaded
+
+- name: Create a directory for extract the OVA image
+  file:
+    path: /tmp/manageiq/
+    state: directory
+
+- name: Extract the qcow image from OVA
+  unarchive:
+    src: /tmp/manageiq.ova
+    dest: /tmp/manageiq/
+  when: downloaded.changed
+
+- name: Login to oVirt engine
+  ovirt_auth:
+    username: "{{ ovirt_user }}"
+    password: "{{ ovirt_password }}"
+    url: "{{ ovirt_url }}"
+    ca_file: "{{ ovirt_ca }}"
+
+- name: Deploy the qcow image to oVirt engine
+  ovirt_disks:
+    auth: "{{ ovirt_auth }}"
+    name: manageiq_disk
+    interface: virtio
+    size: 50GiB
+    format: cow
+    image_path: /tmp/manageiq/images/28c5e3ae-6937-4621-9128-1be8f0a97e81/04a5f050-3956-4bc0-b953-0e11e068b320
+    storage_domain: "{{ vm_storage_domain }}"
+  register: ovirt_disk
+
+- name: Create virtual machine for the ManageIQ
+  ovirt_vms:
+    auth: "{{ ovirt_auth }}"
+    name: "{{ vm_name }}"
+    cluster: "{{ vm_cluster }}"
+    memory: 4GiB
+    operating_system: rhel_7x64
+    type: server
+    nics:
+      - name: nic1
+        profile_name: ovirtmgmt
+        interface: virtio
+    disks:
+      - id: "{{ ovirt_disk.id }}"
+        bootable: true
+    cloud_init: "{{ vm_cloud_init }}"
+
+- name: Logout from oVirt engine
+  ovirt_auth:
+    state: absent
+    ovirt_auth: "{{ ovirt_auth }}"
+  tags:
+    - always
