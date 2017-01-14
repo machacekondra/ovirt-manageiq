@@ -43,7 +43,7 @@ Example Playbook
           root_password: 123456
 
       roles:
-        - ovirt-manageiq
+        - machacekondra.ovirt-manageiq
 ```
 
 License
