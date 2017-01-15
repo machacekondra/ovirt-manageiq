@@ -16,6 +16,16 @@
     dest: /tmp/manageiq/
   when: downloaded.changed
 
+- name: Find the name of the qcow image
+  find:
+    paths: "/tmp/manageiq/images/"
+    patterns: "^[^\\.]+$"
+    file_type: file
+    recurse: true
+    use_regex: true
+  register: image_path
+  failed_when: image_path.matched == 0
+
 - name: Login to oVirt engine
   ovirt_auth:
     username: "{{ ovirt_user }}"
@@ -26,12 +36,12 @@
 - name: Deploy the qcow image to oVirt engine
   ovirt_disks:
     auth: "{{ ovirt_auth }}"
-    name: manageiq_disk
+    name: "{{ vm_name }}_disk"
     interface: virtio
-    size: 50GiB
+    size: "{{ disk_size}}"
     format: cow
-    image_path: /tmp/manageiq/images/28c5e3ae-6937-4621-9128-1be8f0a97e81/04a5f050-3956-4bc0-b953-0e11e068b320
-    storage_domain: "{{ vm_storage_domain }}"
+    image_path: "{{ image_path.files[0].path }}"
+    storage_domain: "{{ disk_storage_domain }}"
   register: ovirt_disk
 
 - name: Create virtual machine for the ManageIQ
@@ -39,17 +49,16 @@
     auth: "{{ ovirt_auth }}"
     name: "{{ vm_name }}"
     cluster: "{{ vm_cluster }}"
-    memory: 4GiB
+    memory: "{{ vm_memory }}"
+    cpu_cores: "{{ vm_cpu }}"
     operating_system: rhel_7x64
     type: server
-    nics:
-      - name: nic1
-        profile_name: ovirtmgmt
-        interface: virtio
     disks:
       - id: "{{ ovirt_disk.id }}"
         bootable: true
+    nics: "{{ vm_nics }}"
     cloud_init: "{{ vm_cloud_init }}"
+    cloud_init_nics: "{{ vm_cloud_init_nics }}"
 
 - name: Logout from oVirt engine
   ovirt_auth:

@@ -1,2 +1,33 @@
 ---
-# defaults file for deploy-manageiq
+# OVA varibales:
+ova_url: http://releases.manageiq.org/manageiq-ovirt-euwe-1.ova
+
+# oVirt login variables:
+ovirt_user: admin@internal
+ovirt_url: https://example.com/ovirt-engine/api
+ovirt_ca: /etc/pki/ovirt-engine/ca.pem
+ovirt_password: 123456
+
+# VM variables:
+vm_name: manageiq
+vm_cluster: Default
+vm_memory: 6GiB
+vm_cpu: 2
+vm_cloud_init:
+  user_name: root
+  root_password: password
+
+# Vm NICS:
+vm_nics:
+  - name: nic1
+    profile_name: ovirtmgmt
+    interface: virtio
+
+vm_cloud_init_nics:
+  - nic_name: eth0
+    nic_boot_protocol: dhcp
+    nic_on_boot: true
+
+# Vm disk variables:
+disk_storage_domain: data
+disk_size: 50GiB
