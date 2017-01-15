@@ -13,7 +13,8 @@
 - name: Extract the qcow image from OVA
   unarchive:
     src: /tmp/manageiq.ova
-    dest: /tmp/manageiq/
+    dest: /tmp/manageiq
+    remote_src: true
   when: downloaded.changed
 
 - name: Find the name of the qcow image
