@@ -114,3 +114,5 @@ License
 -------
 
 GPLv2
+
+https://github.com/machacekondra/ovirt-manageiq/blob/17f83337227852f0db7c68192484d77a674d9f00/.travis.yml#L1-L29
